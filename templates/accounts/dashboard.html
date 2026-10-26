@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Dashboard | Professor's Vet & Pet Care{% endblock %}
+
+{% block content %}
+<div class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- User Overview Banner -->
+    <div class="rounded-3xl bg-gradient-to-r from-emerald-700 via-teal-700 to-slate-900 text-white p-6 sm:p-8 mb-8 shadow-xl relative overflow-hidden">
+        <div class="absolute right-0 bottom-0 opacity-10 text-9xl pointer-events-none translate-x-10 translate-y-6">
+            <i class="fa-solid fa-paw"></i>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
+            <div class="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover rounded-xl">
+                {% else %}
+                    <span class="text-3xl font-extrabold text-emerald-300 uppercase">
+                        {{ user.first_name|default:user.username|slice:":1" }}
+                    </span>
+                {% endif %}
+            </div>
+            <div class="flex-1 text-center sm:text-left">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white">{{ user.get_full_name|default:user.username }}</h1>
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/30 border border-emerald-400/40 text-[11px] font-semibold text-emerald-200 self-center sm:self-auto">
+                        Pet Parent
+                    </span>
+                </div>
+                <p class="text-xs sm:text-sm text-emerald-100/80 mt-1">
+                    {{ user.email }} • {{ user.phone|default:"No phone added" }} • {{ user.city }}
+                </p>
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-4 text-xs font-medium">
+                    <span class="bg-black/20 px-3 py-1 rounded-lg backdrop-blur-xs"><i class="fa-solid fa-paw text-amber-400 mr-1"></i> {{ pets.count }} Registered Pets</span>
+                    <span class="bg-black/20 px-3 py-1 rounded-lg backdrop-blur-xs"><i class="fa-regular fa-calendar-check text-emerald-400 mr-1"></i> {{ appointments.count }} Bookings</span>
+                    <span class="bg-black/20 px-3 py-1 rounded-lg backdrop-blur-xs"><i class="fa-solid fa-bag-shopping text-blue-400 mr-1"></i> {{ orders.count }} Orders</span>
+                </div>
+            </div>
+            <div class="self-center sm:self-start flex gap-2">
+                <a href="{% url 'book_appointment' %}" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> New Booking
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Tabs Navigation -->
+    <div class="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto space-x-2 pb-px mb-8 scrollbar-none text-xs sm:text-sm font-bold">
+        <a href="?tab=profile" class="px-4 py-3 rounded-t-xl transition flex items-center gap-2 whitespace-nowrap {% if active_tab == 'profile' %}bg-white dark:bg-slate-900 border-t-2 border-brand-500 text-brand-600 dark:text-brand-400 shadow-xs{% else %}text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200{% endif %}">
+            <i class="fa-solid fa-user-gear"></i> Profile & Address
+        </a>
+        <a href="?tab=pets" class="px-4 py-3 rounded-t-xl transition flex items-center gap-2 whitespace-nowrap {% if active_tab == 'pets' %}bg-white dark:bg-slate-900 border-t-2 border-brand-500 text-brand-600 dark:text-brand-400 shadow-xs{% else %}text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200{% endif %}">
+            <i class="fa-solid fa-paw"></i> My Pets ({{ pets.count }})
+        </a>
+        <a href="?tab=appointments" class="px-4 py-3 rounded-t-xl transition flex items-center gap-2 whitespace-nowrap {% if active_tab == 'appointments' %}bg-white dark:bg-slate-900 border-t-2 border-brand-500 text-brand-600 dark:text-brand-400 shadow-xs{% else %}text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200{% endif %}">
+            <i class="fa-regular fa-calendar-check"></i> Clinic Appointments ({{ appointments.count }})
+        </a>
+        <a href="?tab=orders" class="px-4 py-3 rounded-t-xl transition flex items-center gap-2 whitespace-nowrap {% if active_tab == 'orders' %}bg-white dark:bg-slate-900 border-t-2 border-brand-500 text-brand-600 dark:text-brand-400 shadow-xs{% else %}text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200{% endif %}">
+            <i class="fa-solid fa-box"></i> Orders & Invoices ({{ orders.count }})
+        </a>
+        <a href="?tab=security" class="px-4 py-3 rounded-t-xl transition flex items-center gap-2 whitespace-nowrap {% if active_tab == 'security' %}bg-white dark:bg-slate-900 border-t-2 border-brand-500 text-brand-600 dark:text-brand-400 shadow-xs{% else %}text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200{% endif %}">
+            <i class="fa-solid fa-shield-halved"></i> Privacy & Security
+        </a>
+    </div>
+
+    <!-- TAB 1: PROFILE MODIFICATION -->
+    {% if active_tab == 'profile' %}
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm max-w-3xl">
+        <div class="border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
+            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Personal & Contact Information</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Keep your delivery address and contact phone updated for clinic notifications.</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="update_profile" value="1">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">First Name</label>
+                    {{ profile_form.first_name }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Last Name</label>
+                    {{ profile_form.last_name }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
+                    {{ profile_form.email }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Mobile Number</label>
+                    {{ profile_form.phone }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Delivery & Clinic Address</label>
+                    {{ profile_form.address }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">City / District</label>
+                    {{ profile_form.city }}
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Profile Photo</label>
+                    {{ profile_form.avatar }}
+                </div>
+            </div>
+
+            <div class="pt-4 flex justify-end">
+                <button type="submit" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- TAB 2: MY PETS (MANAGEMENT & REGISTRATION) -->
+    {% if active_tab == 'pets' %}
+    <div class="space-y-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="font-extrabold text-xl text-slate-900 dark:text-white">Registered Pets</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Save pet profiles for instant appointment booking with Dr. Bhuyan.</p>
+            </div>
+            <button onclick="document.getElementById('add-pet-modal').classList.remove('hidden')" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition">
+                <i class="fa-solid fa-plus"></i> Add New Pet
+            </button>
+        </div>
+
+        <!-- Pets Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for pet in pets %}
+            <div class="rounded-2xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl overflow-hidden flex-shrink-0">
+                            {% if pet.photo %}
+                                <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                {% if pet.species == 'Dog' %}<i class="fa-solid fa-dog"></i>
+                                {% elif pet.species == 'Cat' %}<i class="fa-solid fa-cat"></i>
+                                {% elif pet.species == 'Bird' %}<i class="fa-solid fa-dove"></i>
+                                {% else %}<i class="fa-solid fa-paw"></i>{% endif %}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base text-slate-900 dark:text-white">{{ pet.name }}</h4>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">{{ pet.species }} • {{ pet.breed|default:"Local / Mixed" }}</p>
+                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                {{ pet.gender }} • {{ pet.age_years }}y {{ pet.age_months }}m
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if pet.medical_history %}
+                    <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-xs text-slate-600 dark:text-slate-300 mb-4">
+                        <p class="font-bold text-[10px] text-slate-400 uppercase mb-0.5">Medical History</p>
+                        <p class="line-clamp-2">{{ pet.medical_history }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <a href="{% url 'book_appointment' %}?pet_id={{ pet.id }}" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline">
+                        Book Slot for {{ pet.name }} →
+                    </a>
+                    <a href="{% url 'delete_pet' pet.id %}" onclick="return confirm('Remove {{ pet.name }} from your profile?')" class="text-slate-400 hover:text-rose-500 text-xs transition" title="Delete Pet">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-3 py-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                <i class="fa-solid fa-paw text-4xl text-slate-300 dark:text-slate-700 mb-3"></i>
+                <h4 class="font-bold text-base text-slate-700 dark:text-slate-300">No pets registered yet</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-4">Add your cat, dog, bird, or pet to manage health history.</p>
+                <button onclick="document.getElementById('add-pet-modal').classList.remove('hidden')" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs shadow-sm">
+                    + Register Your First Pet
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add Pet Modal -->
+        <div id="add-pet-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+                <button onclick="document.getElementById('add-pet-modal').classList.add('hidden')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+                <h3 class="font-extrabold text-lg text-slate-900 dark:text-white mb-4">Add Pet Profile</h3>
+                
+                <form action="{% url 'add_pet' %}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Pet Name *</label>
+                        {{ pet_form.name }}
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Species *</label>
+                            {{ pet_form.species }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Gender</label>
+                            {{ pet_form.gender }}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Breed</label>
+                        {{ pet_form.breed }}
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Age (Years)</label>
+                            {{ pet_form.age_years }}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Age (Months)</label>
+                            {{ pet_form.age_months }}
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Weight (kg)</label>
+                        {{ pet_form.weight_kg }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Medical Notes & History</label>
+                        {{ pet_form.medical_history }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Pet Photo</label>
+                        {{ pet_form.photo }}
+                    </div>
+                    <div class="pt-2 flex justify-end gap-2">
+                        <button type="button" onclick="document.getElementById('add-pet-modal').classList.add('hidden')" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold">Cancel</button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md">Save Pet Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 3: CLINIC APPOINTMENTS -->
+    {% if active_tab == 'appointments' %}
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
+            <div>
+                <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Doctor Appointment Bookings</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Dr. Abdulla Al Mamun Bhuyan's clinical schedule and your consultations.</p>
+            </div>
+            <a href="{% url 'book_appointment' %}" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-bold shadow-sm">
+                + New Appointment
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
+                        <th class="py-3 px-3">Booking ID</th>
+                        <th class="py-3 px-3">Pet</th>
+                        <th class="py-3 px-3">Service</th>
+                        <th class="py-3 px-3">Date & Time</th>
+                        <th class="py-3 px-3">Status</th>
+                        <th class="py-3 px-3">Doctor's Advice</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                    {% for apt in appointments %}
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <td class="py-3.5 px-3 font-mono font-bold text-slate-800 dark:text-slate-200">{{ apt.booking_id }}</td>
+                        <td class="py-3.5 px-3 font-semibold text-slate-900 dark:text-white">{{ apt.pet_name }} <span class="text-[10px] text-slate-400 font-normal">({{ apt.pet_species }})</span></td>
+                        <td class="py-3.5 px-3 text-slate-600 dark:text-slate-300">{{ apt.service_type }}</td>
+                        <td class="py-3.5 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                            {{ apt.appointment_date|date:"D, d M Y" }} <br>
+                            <span class="text-[10px] text-brand-600 dark:text-brand-400 font-bold">{{ apt.appointment_time|time:"h:i A" }}</span>
+                        </td>
+                        <td class="py-3.5 px-3 whitespace-nowrap">
+                            {% if apt.status == 'CONFIRMED' %}
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold text-[10px]">Confirmed</span>
+                            {% elif apt.status == 'COMPLETED' %}
+                                <span class="px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold text-[10px]">Completed</span>
+                            {% elif apt.status == 'CANCELLED' %}
+                                <span class="px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 font-bold text-[10px]">Cancelled</span>
+                            {% else %}
+                                <span class="px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold text-[10px]">Pending Approval</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3.5 px-3 text-slate-500 dark:text-slate-400 max-w-xs truncate">
+                            {{ apt.doctor_advice|default:"Awaiting clinical checkup." }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-slate-400">
+                            No appointments found. <a href="{% url 'book_appointment' %}" class="text-brand-600 font-bold">Book a slot today</a>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 4: ORDERS & INVOICES -->
+    {% if active_tab == 'orders' %}
+    <div class="space-y-6">
+        <div>
+            <h3 class="font-extrabold text-xl text-slate-900 dark:text-white">Order History & Invoices</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Track medicine, pet food, and supplies orders dispatched from our Rajshahi hub.</p>
+        </div>
+
+        <div class="space-y-4">
+            {% for order in orders %}
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4 gap-2">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono font-bold text-sm text-slate-900 dark:text-white">{{ order.order_number }}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full font-semibold {% if order.status == 'DELIVERED' %}bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300{% elif order.status == 'CANCELLED' %}bg-rose-100 text-rose-800{% else %}bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ order.created_at|date:"M d, Y • h:i A" }}</p>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="font-extrabold text-base text-slate-900 dark:text-white">৳{{ order.total_amount|floatformat:0 }}</span>
+                        <p class="text-[10px] text-slate-500 font-medium">{{ order.get_payment_method_display }} ({{ order.payment_status }})</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    {% for item in order.items.all %}
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-700 dark:text-slate-300 font-medium">{{ item.product_name }} × {{ item.quantity }}</span>
+                        <span class="font-mono text-slate-900 dark:text-white">৳{{ item.total_price|floatformat:0 }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                    <span class="text-slate-500">Shipping to: <strong>{{ order.shipping_address }}, {{ order.city }}</strong></span>
+                    <a href="{% url 'order_confirmation' order.order_number %}" class="font-bold text-brand-600 hover:text-brand-700 dark:text-brand-400">
+                        View Invoice →
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="py-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                <i class="fa-solid fa-basket-shopping text-4xl text-slate-300 dark:text-slate-700 mb-3"></i>
+                <h4 class="font-bold text-base text-slate-700 dark:text-slate-300">No orders placed yet</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-4">Explore high-quality pet food and veterinary medicine.</p>
+                <a href="{% url 'shop_home' %}" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs shadow-sm">
+                    Browse Pet Store
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- TAB 5: PRIVACY & SECURITY -->
+    {% if active_tab == 'security' %}
+    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm max-w-xl">
+        <div class="border-b border-slate-100 dark:border-slate-800 pb-4 mb-6">
+            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Account Security & Password</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Update your account password regularly to protect your personal and pet data.</p>
+        </div>
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Current Password</label>
+                <input type="password" name="current_password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">New Password</label>
+                <input type="password" name="new_password" required minlength="6" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Confirm New Password</label>
+                <input type="password" name="confirm_password" required minlength="6" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm">
+            </div>
+
+            <div class="pt-4 flex justify-end">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition">
+                    Update Password
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

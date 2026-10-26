@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Professor's Vet & Pet Care | Rajshahi{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+
+    <!-- Tailwind CSS (Tailwind CDN with arbitrary values & modern plugins) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981', // Emerald primary
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        accent: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        amberbrand: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'float-slow': 'float 6s ease-in-out infinite',
+                        'float-reverse': 'floatRev 7s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                        'marquee': 'marquee 25s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-14px) rotate(3deg)' },
+                        },
+                        floatRev: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(12px) rotate(-4deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Font Awesome 6 Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom CSS styles -->
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px 0 rgba(16, 185, 129, 0.08);
+        }
+
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card-doctor {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 253, 244, 0.7) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(52, 211, 153, 0.35);
+            box-shadow: 0 20px 45px -10px rgba(16, 185, 129, 0.25);
+        }
+
+        .dark .glass-card-doctor {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(6, 78, 59, 0.55) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(52, 211, 153, 0.3);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Continuous marquee ticker */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        .marquee-content {
+            display: inline-flex;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #059669;
+        }
+    </style>
+
+    <!-- Theme Initialization Script to avoid FOUC (Flash of Unstyled Content) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            if (savedTheme === 'dark' || (savedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- 1. LIVE MARQUEE NOTICE & OFFER TICKER -->
+    <div class="bg-gradient-to-r from-brand-900 via-emerald-800 to-teal-900 text-white text-xs sm:text-sm py-2 px-4 shadow-sm z-50 border-b border-emerald-700/40">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2 flex-shrink-0 bg-amber-400 text-slate-900 font-bold px-2.5 py-0.5 rounded-full text-xs uppercase tracking-wider animate-pulse">
+                <i class="fa-solid fa-bullhorn"></i> Live Notice
+            </div>
+            <div class="marquee-container flex-1 overflow-hidden">
+                <div class="marquee-content gap-12 font-medium">
+                    {% if marquee_notices %}
+                        {% for notice in marquee_notices %}
+                            <div class="inline-flex items-center gap-2 text-emerald-100">
+                                <span class="bg-emerald-600/60 text-white px-2 py-0.5 rounded text-[11px] font-semibold">{{ notice.badge_text }}</span>
+                                <span>{{ notice.content }}</span>
+                                {% if notice.discount_code %}
+                                    <span class="bg-amber-400/90 text-slate-900 px-1.5 py-0.5 rounded text-[11px] font-bold">Use Code: {{ notice.discount_code }}</span>
+                                {% endif %}
+                                <span class="text-emerald-400">✦</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="inline-flex items-center gap-2 text-emerald-100">
+                            <span class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[11px] font-semibold">CHAMBER OPEN</span>
+                            <span>Dr. Abdulla Al Mamun Bhuyan's Clinical Chamber is Open. Location: 138 Debishing Para, Madrashar More, Rajshahi. Call: +8801316254500</span>
+                            <span class="text-emerald-400">✦</span>
+                            <span class="bg-amber-400 text-slate-900 px-2 py-0.5 rounded text-[11px] font-semibold">15% OFF</span>
+                            <span>Special discount on pet vaccines & veterinary care medicines this week!</span>
+                            <span class="text-emerald-400">✦</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-3 text-xs flex-shrink-0 text-emerald-200">
+                <a href="tel:+8801316254500" class="hover:text-white transition flex items-center gap-1">
+                    <i class="fa-solid fa-phone-volume text-amber-400"></i> +8801316254500
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MAIN NAVIGATION HEADER -->
+    <header class="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo & Identity -->
+                <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+                    <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-brand-500/10 dark:bg-brand-400/10 p-1 flex items-center justify-center border border-brand-500/20 shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <img src="{% static 'images/logo.png' %}" alt="Professor's Vet & Pet Care Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 bg-clip-text text-transparent">
+                                Professor's Vet
+                            </span>
+                            <span class="text-xs bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 px-1.5 py-0.5 rounded font-semibold">& Pet Care</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Prof. Dr. Abdulla Al Mamun Bhuyan • Rajshahi</p>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2 text-sm font-semibold">
+                    <a href="{% url 'home' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                        <i class="fa-solid fa-house mr-1 text-slate-400"></i> Home
+                    </a>
+                    <a href="{% url 'home' %}#doctor-profile" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                        <i class="fa-solid fa-user-doctor mr-1 text-brand-500"></i> Dr. Porichiti
+                    </a>
+                    <a href="{% url 'book_appointment' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                        <i class="fa-regular fa-calendar-check mr-1 text-blue-500"></i> Appointments
+                    </a>
+                    <a href="{% url 'gallery_list' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                        <i class="fa-solid fa-heart-pulse mr-1 text-rose-500"></i> Surgery Gallery
+                    </a>
+                    <a href="{% url 'shop_home' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                        <i class="fa-solid fa-bag-shopping mr-1 text-amber-500"></i> Pet Store
+                    </a>
+                    <a href="{% url 'home' %}#clinic-map" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                        <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> Location Map
+                    </a>
+                </nav>
+
+                <!-- Actions: Theme Toggle, Cart, User Profile & Mobile Toggle -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    
+                    <!-- Theme Toggle (Day / Dark / System) -->
+                    <div class="relative" id="theme-toggle-container">
+                        <button id="theme-toggle-btn" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition border border-slate-200 dark:border-slate-700 shadow-sm" title="Toggle Theme">
+                            <i id="theme-icon-light" class="fa-solid fa-sun text-amber-500 hidden text-base"></i>
+                            <i id="theme-icon-dark" class="fa-solid fa-moon text-blue-400 hidden text-base"></i>
+                            <i id="theme-icon-system" class="fa-solid fa-desktop text-emerald-500 hidden text-base"></i>
+                        </button>
+                        <!-- Theme Dropdown Menu -->
+                        <div id="theme-dropdown" class="hidden absolute right-0 mt-2 w-36 rounded-xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 py-1 z-50 text-xs font-semibold">
+                            <button onclick="setAppTheme('light')" class="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                <i class="fa-solid fa-sun text-amber-500 w-4"></i> Light Mode
+                            </button>
+                            <button onclick="setAppTheme('dark')" class="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                <i class="fa-solid fa-moon text-blue-400 w-4"></i> Dark Mode
+                            </button>
+                            <button onclick="setAppTheme('system')" class="w-full px-3 py-2 text-left flex items-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300">
+                                <i class="fa-solid fa-desktop text-emerald-500 w-4"></i> System Default
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cart Drawer / Button -->
+                    <a href="{% url 'cart_detail' %}" class="relative w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-brand-50 dark:hover:bg-brand-950/40 hover:text-brand-600 dark:hover:text-brand-400 flex items-center justify-center transition border border-slate-200 dark:border-slate-700 shadow-sm" title="View Shopping Cart">
+                        <i class="fa-solid fa-cart-shopping text-base"></i>
+                        <span id="cart-badge-count" class="absolute -top-1.5 -right-1.5 bg-brand-600 text-white font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow">
+                            {{ cart_count|default:"0" }}
+                        </span>
+                    </a>
+
+                    <!-- User Account Dropdown -->
+                    {% if user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition">
+                                <div class="w-7 h-7 rounded-lg bg-brand-500 text-white font-bold text-xs flex items-center justify-center uppercase">
+                                    {{ user.first_name|default:user.username|slice:":1" }}
+                                </div>
+                                <span class="hidden md:block text-xs font-semibold text-slate-700 dark:text-slate-200 max-w-[100px] truncate">
+                                    {{ user.first_name|default:user.username }}
+                                </span>
+                                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-52 rounded-xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 py-1.5 hidden group-hover:block hover:block z-50 text-xs font-semibold">
+                                <div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
+                                    <p class="font-bold text-slate-900 dark:text-slate-100">{{ user.get_full_name|default:user.username }}</p>
+                                    <p class="text-[11px] text-slate-400 truncate">{{ user.email|default:user.phone }}</p>
+                                </div>
+                                <a href="{% url 'user_dashboard' %}" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                                    <i class="fa-solid fa-gauge text-brand-500 w-4"></i> Dashboard
+                                </a>
+                                <a href="{% url 'user_dashboard' %}?tab=appointments" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                                    <i class="fa-regular fa-calendar-check text-blue-500 w-4"></i> My Appointments
+                                </a>
+                                <a href="{% url 'user_dashboard' %}?tab=orders" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                                    <i class="fa-solid fa-box text-amber-500 w-4"></i> My Orders
+                                </a>
+                                <a href="{% url 'user_dashboard' %}?tab=pets" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                                    <i class="fa-solid fa-paw text-rose-500 w-4"></i> My Pets
+                                </a>
+                                {% if user.is_staff %}
+                                    <a href="{% url 'admin:index' %}" target="_blank" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-bold border-t border-slate-100 dark:border-slate-800">
+                                        <i class="fa-solid fa-user-shield w-4"></i> Admin Panel
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'logout' %}" class="flex items-center gap-2 px-4 py-2 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 border-t border-slate-100 dark:border-slate-800">
+                                    <i class="fa-solid fa-right-from-bracket w-4"></i> Log Out
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="hidden sm:flex items-center gap-2">
+                            <a href="{% url 'login' %}" class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                                Log In
+                            </a>
+                            <a href="{% url 'register' %}" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition">
+                                Register
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Mobile Menu Hamburger Button -->
+                    <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center border border-slate-200 dark:border-slate-700">
+                        <i class="fa-solid fa-bars text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-2">
+            <a href="{% url 'home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Home</a>
+            <a href="{% url 'home' %}#doctor-profile" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Dr. Porichiti (Profile)</a>
+            <a href="{% url 'book_appointment' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Book Appointment</a>
+            <a href="{% url 'gallery_list' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Surgery & Case Gallery</a>
+            <a href="{% url 'shop_home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Pet Food & Medicine Store</a>
+            <a href="{% url 'home' %}#clinic-map" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Google Satellite Map</a>
+            {% if not user.is_authenticated %}
+                <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex gap-2">
+                    <a href="{% url 'login' %}" class="flex-1 text-center py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 font-semibold text-sm">Log In</a>
+                    <a href="{% url 'register' %}" class="flex-1 text-center py-2.5 rounded-lg bg-brand-600 text-white font-semibold text-sm">Register</a>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- 3. DJANGO FLASH MESSAGES -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+            {% for message in messages %}
+                <div class="rounded-xl p-4 mb-3 flex items-start gap-3 shadow-md {% if message.tags == 'error' %}bg-rose-50 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200{% elif message.tags == 'success' %}bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200{% else %}bg-blue-50 dark:bg-blue-950/70 border border-blue-300 dark:border-blue-800 text-blue-800 dark:text-blue-200{% endif %}">
+                    <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation text-rose-500{% elif message.tags == 'success' %}fa-circle-check text-emerald-500{% else %}fa-circle-info text-blue-500{% endif %} mt-0.5 text-lg"></i>
+                    <div class="flex-1 text-sm font-medium">{{ message }}</div>
+                    <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- 4. MAIN CONTENT INJECTION -->
+    <main class="flex-1">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- 5. FOOTER WITH SATELLITE LOCATION & CLINIC HOURS -->
+    <footer class="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Col 1: Clinic Bio -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <img src="{% static 'images/logo.png' %}" alt="Professor's Vet Care" class="w-12 h-12 object-contain bg-white/10 rounded-xl p-1">
+                        <div>
+                            <h4 class="text-white font-extrabold text-base tracking-tight">Professor's Vet & Pet Care</h4>
+                            <p class="text-xs text-brand-400 font-semibold">Rajshahi Veterinary Excellence</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Under the expert clinical supervision of <strong>Dr. Abdulla Al Mamun Bhuyan</strong> (Associate Professor, Department of Veterinary and Animal Sciences, RU). Providing cutting-edge medical diagnosis, surgery, vaccinations, and comprehensive pet care.
+                    </p>
+                    <div class="flex items-center gap-3 pt-2 text-slate-400">
+                        <a href="https://facebook.com" target="_blank" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-brand-600 hover:text-white flex items-center justify-center transition"><i class="fa-brands fa-facebook-f text-sm"></i></a>
+                        <a href="mailto:bhuyan@ru.ac.bd" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-brand-600 hover:text-white flex items-center justify-center transition"><i class="fa-solid fa-envelope text-sm"></i></a>
+                        <a href="tel:+8801316254500" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-brand-600 hover:text-white flex items-center justify-center transition"><i class="fa-solid fa-phone text-sm"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="space-y-3">
+                    <h5 class="text-white font-bold text-sm uppercase tracking-wider border-l-2 border-brand-500 pl-2">Services & Features</h5>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="{% url 'book_appointment' %}" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Online Appointment Booking</a></li>
+                        <li><a href="{% url 'gallery_list' %}" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Surgery & Treatment Gallery</a></li>
+                        <li><a href="{% url 'shop_home' %}" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Pet Food & Accessories Store</a></li>
+                        <li><a href="{% url 'shop_home' %}?category=veterinary-medicine" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Prescription Vet Pharmacy</a></li>
+                        <li><a href="{% url 'home' %}#doctor-profile" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Dr. Porichiti (Doctor Profile)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Chamber & Operating Hours -->
+                <div class="space-y-3">
+                    <h5 class="text-white font-bold text-sm uppercase tracking-wider border-l-2 border-brand-500 pl-2">Chamber Hours</h5>
+                    <div class="text-xs space-y-2 text-slate-400">
+                        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+                            <span class="text-slate-300 font-medium">Saturday - Thursday:</span>
+                            <span class="text-brand-400 font-semibold">04:00 PM - 09:30 PM</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+                            <span class="text-slate-300 font-medium">Friday:</span>
+                            <span class="text-amber-400 font-semibold">10:00 AM - 08:00 PM</span>
+                        </div>
+                        <div class="flex justify-between pb-1">
+                            <span class="text-slate-300 font-medium">Emergency Surgery:</span>
+                            <span class="text-rose-400 font-semibold">24/7 On-Call</span>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <span class="inline-block bg-emerald-950/80 border border-emerald-600/40 text-emerald-300 text-[11px] px-3 py-1.5 rounded-lg">
+                            <i class="fa-solid fa-shield-dog text-brand-400 mr-1"></i> Dedicated Pet Intensive Care
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Col 4: Location & Satellite Map Link -->
+                <div class="space-y-3">
+                    <h5 class="text-white font-bold text-sm uppercase tracking-wider border-l-2 border-brand-500 pl-2">Clinic Location</h5>
+                    <div class="text-xs space-y-2 text-slate-400">
+                        <p class="flex items-start gap-2">
+                            <i class="fa-solid fa-location-dot text-rose-500 mt-1"></i>
+                            <span><strong>138 Debishing Para, Madrashar More, Rajshahi</strong></span>
+                        </p>
+                        <p class="flex items-start gap-2">
+                            <i class="fa-solid fa-building-columns text-blue-400 mt-1"></i>
+                            <span>Department of Veterinary and Animal Sciences, University of Rajshahi-6205</span>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="fa-solid fa-phone-volume text-brand-400"></i>
+                            <a href="tel:+8801316254500" class="hover:text-white transition font-bold text-slate-200">+8801316254500</a>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-amber-400"></i>
+                            <a href="mailto:bhuyan@ru.ac.bd" class="hover:text-white transition">bhuyan@ru.ac.bd</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Copyright & Credit -->
+            <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© 2026 Professor's Vet & Pet Care. All Rights Reserved. Clinical Supervision by Prof. Dr. Abdulla Al Mamun Bhuyan.</p>
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'home' %}#clinic-map" class="hover:text-brand-400 transition">Google Satellite Map</a>
+                    <span>•</span>
+                    <a href="{% url 'book_appointment' %}" class="hover:text-brand-400 transition">Book Slot</a>
+                    <span>•</span>
+                    <a href="{% url 'admin:index' %}" class="hover:text-brand-400 transition">Staff Login</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Theme Switcher & Interactive Script -->
+    <script>
+        // Theme Manager
+        const themeBtn = document.getElementById('theme-toggle-btn');
+        const themeDropdown = document.getElementById('theme-dropdown');
+        const iconLight = document.getElementById('theme-icon-light');
+        const iconDark = document.getElementById('theme-icon-dark');
+        const iconSystem = document.getElementById('theme-icon-system');
+
+        function updateThemeIcons(theme) {
+            iconLight.classList.add('hidden');
+            iconDark.classList.add('hidden');
+            iconSystem.classList.add('hidden');
+
+            if (theme === 'light') {
+                iconLight.classList.remove('hidden');
+            } else if (theme === 'dark') {
+                iconDark.classList.remove('hidden');
+            } else {
+                iconSystem.classList.remove('hidden');
+            }
+        }
+
+        function setAppTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            updateThemeIcons(theme);
+            if (themeDropdown) themeDropdown.classList.add('hidden');
+        }
+
+        // Initialize icons on load
+        const currentTheme = localStorage.getItem('theme') || 'system';
+        updateThemeIcons(currentTheme);
+
+        if (themeBtn) {
+            themeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                themeDropdown.classList.toggle('hidden');
+            });
+        }
+
+        document.addEventListener('click', () => {
+            if (themeDropdown) themeDropdown.classList.add('hidden');
+        });
+
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+
+    <!-- Global Cart Script -->
+    <script src="{% static 'js/cart.js' %}"></script>
+
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+venv/
+
+# Database
+*.sqlite3
+db.sqlite3-journal
+
+# Static & Media in Production
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+.cursor/

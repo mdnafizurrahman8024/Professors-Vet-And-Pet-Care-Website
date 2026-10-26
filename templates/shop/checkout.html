@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout | Professor's Vet & Pet Care{% endblock %}
+
+{% block content %}
+<div class="py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                    Secure Checkout
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    {% if user.is_authenticated %}
+                        Logged in as <strong class="text-slate-800 dark:text-slate-200">{{ user.get_full_name|default:user.username }}</strong>
+                    {% else %}
+                        Ordering as <strong>Guest</strong> • <a href="{% url 'login' %}?next={% url 'checkout' %}" class="text-brand-600 font-bold hover:underline">Log in for 1-click checkout</a>
+                    {% endif %}
+                </p>
+            </div>
+            
+            <a href="{% url 'cart_detail' %}" class="text-xs font-bold text-slate-500 hover:text-brand-600 flex items-center gap-1.5 self-start sm:self-auto">
+                <i class="fa-solid fa-arrow-left"></i> Edit Cart ({{ cart|length }} items)
+            </a>
+        </div>
+
+        <form method="POST" action="{% url 'checkout' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left 8 cols: Shipping, Prescription & Payment details -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- 1. Customer & Delivery Address -->
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3 mb-2">
+                            <span class="w-6 h-6 rounded-full bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center">1</span>
+                            <h2 class="font-extrabold text-base text-slate-900 dark:text-white">Delivery Address & Contact Details</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Recipient Full Name *</label>
+                                <input type="text" name="full_name" value="{% if user.is_authenticated %}{{ user.get_full_name|default:user.username }}{% endif %}" required placeholder="e.g. Tanvir Ahmed" 
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Mobile Number (For Delivery SMS) *</label>
+                                <input type="text" name="phone" value="{% if user.is_authenticated %}{{ user.phone|default:'' }}{% endif %}" required placeholder="+8801XXXXXXXXX" 
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Email Address (For Invoice) *</label>
+                                <input type="email" name="email" value="{% if user.is_authenticated %}{{ user.email|default:'' }}{% endif %}" required placeholder="email@example.com" 
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">City / Region *</label>
+                                <input type="text" name="city" value="Rajshahi" required 
+                                       class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Detailed Street Address / Area *</label>
+                            <textarea name="shipping_address" required rows="2" placeholder="House/Flat number, road, area in Rajshahi..." 
+                                      class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500">{% if user.is_authenticated %}{{ user.address|default:'' }}{% endif %}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Special Delivery Notes (Optional)</label>
+                            <input type="text" name="order_notes" placeholder="e.g. Call before delivery, ring second floor bell..." 
+                                   class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs">
+                        </div>
+                    </div>
+
+                    <!-- 2. Prescription Upload (Only if cart contains restricted meds) -->
+                    {% if cart.has_prescription_items %}
+                    <div class="bg-purple-50 dark:bg-purple-950/40 rounded-3xl p-6 sm:p-8 border border-purple-200 dark:border-purple-900 shadow-sm space-y-3">
+                        <div class="flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-purple-600 text-white font-extrabold text-xs flex items-center justify-center">2</span>
+                            <h2 class="font-extrabold text-base text-purple-950 dark:text-purple-200">
+                                Doctor's Prescription Upload (Required)
+                            </h2>
+                        </div>
+                        <p class="text-xs text-purple-800 dark:text-purple-300 leading-relaxed">
+                            Under Bangladesh Veterinary Pharmaceutical regulations, restricted drugs require a valid prescription from Dr. Abdulla Al Mamun Bhuyan or a registered veterinarian.
+                        </p>
+                        
+                        <div class="pt-2">
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Attach Prescription Photo or PDF *</label>
+                            <input type="file" name="prescription_file" required accept="image/*,.pdf" 
+                                   class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- 3. Payment Method Selection -->
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3 mb-2">
+                            <span class="w-6 h-6 rounded-full bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center">{% if cart.has_prescription_items %}3{% else %}2{% endif %}</span>
+                            <h2 class="font-extrabold text-base text-slate-900 dark:text-white">Payment Method</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- Option 1: Cash on Delivery -->
+                            <label class="payment-method-card relative flex items-center gap-3 p-4 rounded-2xl border-2 border-brand-500 bg-brand-50/40 dark:bg-brand-950/40 cursor-pointer">
+                                <input type="radio" name="payment_method" value="COD" checked onchange="togglePaymentInstructions('COD')" class="text-brand-600 focus:ring-brand-500">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                                        <i class="fa-solid fa-hand-holding-dollar text-brand-600"></i> Cash on Delivery
+                                    </p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Pay in cash upon doorstep receipt</p>
+                                </div>
+                            </label>
+
+                            <!-- Option 2: bKash -->
+                            <label class="payment-method-card relative flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-brand-500 cursor-pointer">
+                                <input type="radio" name="payment_method" value="BKASH" onchange="togglePaymentInstructions('BKASH')" class="text-brand-600 focus:ring-brand-500">
+                                <div>
+                                    <p class="text-xs font-bold text-pink-600 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-mobile-screen-button"></i> bKash Online
+                                    </p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Send money to merchant number</p>
+                                </div>
+                            </label>
+
+                            <!-- Option 3: Nagad -->
+                            <label class="payment-method-card relative flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-brand-500 cursor-pointer">
+                                <input type="radio" name="payment_method" value="NAGAD" onchange="togglePaymentInstructions('NAGAD')" class="text-brand-600 focus:ring-brand-500">
+                                <div>
+                                    <p class="text-xs font-bold text-orange-600 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-wallet"></i> Nagad
+                                    </p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Send money to clinic account</p>
+                                </div>
+                            </label>
+
+                            <!-- Option 4: Card -->
+                            <label class="payment-method-card relative flex items-center gap-3 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-brand-500 cursor-pointer">
+                                <input type="radio" name="payment_method" value="CARD" onchange="togglePaymentInstructions('CARD')" class="text-brand-600 focus:ring-brand-500">
+                                <div>
+                                    <p class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-credit-card"></i> Visa / Mastercard
+                                    </p>
+                                    <p class="text-[11px] text-slate-500 mt-0.5">Pay via card simulator</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Mobile Banking Instructions & TrxID Input (Hidden by default for COD) -->
+                        <div id="mobile-payment-box" class="hidden p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 space-y-3">
+                            <div class="flex items-start gap-2 text-xs text-amber-900 dark:text-amber-200">
+                                <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+                                <div>
+                                    <p class="font-bold" id="mfs-title">bKash / Nagad Payment Instructions</p>
+                                    <p class="mt-0.5" id="mfs-text">
+                                        Please Send Money of exact amount to <strong>+8801316254500</strong> (Personal/Merchant). Enter the 8-10 digit Transaction ID (TrxID) below:
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase text-slate-700 dark:text-slate-300 mb-1">Transaction ID (TrxID) *</label>
+                                <input type="text" name="transaction_id" id="trx-id-input" placeholder="e.g. 9J4K28DM01" 
+                                       class="w-full px-4 py-2.5 rounded-xl border border-amber-300 dark:border-amber-800 bg-white dark:bg-slate-800 text-xs font-mono">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Right 4 cols: Sticky Order Summary -->
+                <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm sticky top-28 space-y-6">
+                    <h3 class="font-extrabold text-lg text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
+                        Review Order ({{ cart|length }} items)
+                    </h3>
+
+                    <!-- Mini items breakdown -->
+                    <div class="max-h-60 overflow-y-auto space-y-3 pr-1 text-xs">
+                        {% for item in cart %}
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex-1 min-w-0">
+                                <p class="font-bold text-slate-800 dark:text-slate-200 truncate">{{ item.name }}</p>
+                                <p class="text-[10px] text-slate-400">Qty: {{ item.quantity }} × ৳{{ item.price|floatformat:0 }}</p>
+                            </div>
+                            <span class="font-mono font-bold text-slate-900 dark:text-white">৳{{ item.total_price|floatformat:0 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                        <div class="flex justify-between">
+                            <span>Subtotal:</span>
+                            <span class="font-bold font-mono">৳{{ subtotal|floatformat:0 }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Delivery (Rajshahi):</span>
+                            <span class="font-bold font-mono">৳{{ delivery_fee|floatformat:0 }}</span>
+                        </div>
+                        <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-between text-sm">
+                            <span class="font-extrabold text-slate-900 dark:text-white">Total Payable:</span>
+                            <span class="font-extrabold text-brand-600 dark:text-brand-400 font-mono text-lg">৳{{ total_amount|floatformat:0 }}</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 px-6 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-extrabold text-sm shadow-lg shadow-brand-500/25 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Confirm & Place Order</span>
+                    </button>
+
+                    <div class="text-[11px] text-slate-400 text-center space-y-1">
+                        <p><i class="fa-solid fa-shield-check text-emerald-500"></i> SSL / End-to-End Encrypted Checkout</p>
+                        <p>Customer Support: +8801316254500</p>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function togglePaymentInstructions(method) {
+        const box = document.getElementById('mobile-payment-box');
+        const trxInput = document.getElementById('trx-id-input');
+        const mfsTitle = document.getElementById('mfs-title');
+        const mfsText = document.getElementById('mfs-text');
+
+        // Style borders
+        document.querySelectorAll('.payment-method-card').forEach(c => {
+            c.classList.remove('border-brand-500', 'bg-brand-50/40', 'dark:bg-brand-950/40', 'border-2');
+            c.classList.add('border', 'border-slate-200', 'dark:border-slate-700');
+        });
+
+        event.target.closest('.payment-method-card').classList.add('border-brand-500', 'bg-brand-50/40', 'dark:bg-brand-950/40', 'border-2');
+
+        if (method === 'BKASH') {
+            box.classList.remove('hidden');
+            mfsTitle.innerText = "bKash Online Payment";
+            mfsText.innerHTML = "Send Money (BDT {{ total_amount|floatformat:0 }}) to <strong>+8801316254500</strong>. Enter the TrxID below:";
+            trxInput.required = true;
+        } else if (method === 'NAGAD') {
+            box.classList.remove('hidden');
+            mfsTitle.innerText = "Nagad Online Payment";
+            mfsText.innerHTML = "Send Money (BDT {{ total_amount|floatformat:0 }}) to <strong>+8801316254500</strong>. Enter the TrxID below:";
+            trxInput.required = true;
+        } else if (method === 'CARD') {
+            box.classList.remove('hidden');
+            mfsTitle.innerText = "Debit / Credit Card Payment";
+            mfsText.innerHTML = "Enter your simulation reference code or transaction authorization number:";
+            trxInput.required = true;
+        } else {
+            box.classList.add('hidden');
+            trxInput.required = false;
+        }
+    }
+</script>
+{% endblock %}

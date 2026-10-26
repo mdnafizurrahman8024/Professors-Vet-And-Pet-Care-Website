@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pet Food, Veterinary Medicine & Accessories | Professor's Vet Care Store{% endblock %}
+
+{% block content %}
+<div class="py-10 bg-slate-50 dark:bg-slate-950 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Store Header Banner -->
+        <div class="rounded-3xl bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white p-8 sm:p-12 mb-10 shadow-xl relative overflow-hidden">
+            <div class="absolute right-6 top-1/2 -translate-y-1/2 opacity-10 text-9xl pointer-events-none hidden sm:block">
+                <i class="fa-solid fa-basket-shopping"></i>
+            </div>
+            <div class="max-w-2xl relative z-10 space-y-3">
+                <span class="px-3 py-1 rounded-full bg-amber-400 text-slate-900 text-xs font-bold uppercase tracking-wider">
+                    Genuine Veterinary Pharmacy & Pet Supplies
+                </span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Premium Pet Food, Authentic Medicines & Toys
+                </h1>
+                <p class="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+                    Prescribed by Dr. Abdulla Al Mamun Bhuyan. Guaranteed 100% authentic cold-chain storage vaccines, clinical diets, and high-quality accessories delivered right to your doorstep in Rajshahi.
+                </p>
+            </div>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm mb-8 space-y-4">
+            
+            <!-- Category Pills Row -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <a href="{% url 'shop_home' %}" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition {% if not selected_category %}bg-brand-600 text-white shadow-xs{% else %}bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200{% endif %}">
+                    All Categories
+                </a>
+                {% for cat in categories %}
+                    <a href="{% url 'shop_home' %}?category={{ cat.slug }}{% if selected_pet %}&pet={{ selected_pet }}{% endif %}" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition {% if selected_category == cat.slug %}bg-brand-600 text-white shadow-xs{% else %}bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200{% endif %}">
+                        {{ cat.name }}
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Pet Type Filter, Search, and Sort Row -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 items-center">
+                
+                <!-- Target Pet Filter Pills -->
+                <div class="md:col-span-5 flex items-center gap-1.5 overflow-x-auto text-xs">
+                    <span class="text-slate-400 font-bold uppercase text-[10px] mr-1">Pet:</span>
+                    <a href="{% url 'shop_home' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" class="px-2.5 py-1 rounded-lg transition font-semibold {% if not selected_pet %}bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white{% else %}text-slate-500 hover:bg-slate-100{% endif %}">
+                        All
+                    </a>
+                    <a href="{% url 'shop_home' %}?pet=DOG{% if selected_category %}&category={{ selected_category }}{% endif %}" class="px-2.5 py-1 rounded-lg transition font-semibold {% if selected_pet == 'DOG' %}bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white{% else %}text-slate-500 hover:bg-slate-100{% endif %}">
+                        <i class="fa-solid fa-dog mr-1"></i> Dogs
+                    </a>
+                    <a href="{% url 'shop_home' %}?pet=CAT{% if selected_category %}&category={{ selected_category }}{% endif %}" class="px-2.5 py-1 rounded-lg transition font-semibold {% if selected_pet == 'CAT' %}bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white{% else %}text-slate-500 hover:bg-slate-100{% endif %}">
+                        <i class="fa-solid fa-cat mr-1"></i> Cats
+                    </a>
+                    <a href="{% url 'shop_home' %}?pet=BIRD{% if selected_category %}&category={{ selected_category }}{% endif %}" class="px-2.5 py-1 rounded-lg transition font-semibold {% if selected_pet == 'BIRD' %}bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white{% else %}text-slate-500 hover:bg-slate-100{% endif %}">
+                        <i class="fa-solid fa-dove mr-1"></i> Birds
+                    </a>
+                </div>
+
+                <!-- Search Input -->
+                <div class="md:col-span-4 relative">
+                    <form method="GET" action="{% url 'shop_home' %}">
+                        {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                        {% if selected_pet %}<input type="hidden" name="pet" value="{{ selected_pet }}">{% endif %}
+                        <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Search products, medicine, food..." 
+                               class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-brand-500">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    </form>
+                </div>
+
+                <!-- Sort Dropdown -->
+                <div class="md:col-span-3 flex justify-end">
+                    <form method="GET" action="{% url 'shop_home' %}" class="w-full">
+                        {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+                        {% if selected_pet %}<input type="hidden" name="pet" value="{{ selected_pet }}">{% endif %}
+                        {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+                        <select name="sort" onchange="this.form.submit()" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 font-semibold focus:ring-2 focus:ring-brand-500">
+                            <option value="featured" {% if sort_by == 'featured' %}selected{% endif %}>Sort: Featured First</option>
+                            <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Newest Additions</option>
+                        </select>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Products Catalog Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for product in products %}
+                {% include 'shop/_product_card.html' with product=product %}
+            {% empty %}
+            <div class="col-span-4 py-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                <i class="fa-solid fa-box-open text-4xl text-slate-300 dark:text-slate-700 mb-3"></i>
+                <h4 class="font-bold text-base text-slate-700 dark:text-slate-300">No products match your criteria</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-4">Try clearing your filters or search keywords.</p>
+                <a href="{% url 'shop_home' %}" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs shadow-sm">
+                    Reset All Filters
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ case.title }} | Surgery Gallery | Professor's Vet Care{% endblock %}
+
+{% block content %}
+<div class="py-12 bg-slate-50 dark:bg-slate-950 min-h-screen">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-6 font-medium">
+            <a href="{% url 'home' %}" class="hover:text-brand-600">Home</a>
+            <span>/</span>
+            <a href="{% url 'gallery_list' %}" class="hover:text-brand-600">Surgery Gallery</a>
+            <span>/</span>
+            <span class="text-slate-800 dark:text-slate-200 truncate">{{ case.title }}</span>
+        </nav>
+
+        <!-- Case Header -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-lg mb-8">
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span class="bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    {{ case.category.name }}
+                </span>
+                <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-circle-check"></i> {{ case.outcome }}
+                </span>
+                <span class="text-xs text-slate-400">
+                    <i class="fa-solid fa-eye ml-2 mr-1"></i> {{ case.view_count }} views
+                </span>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                {{ case.title }}
+            </h1>
+
+            <div class="flex flex-wrap items-center gap-4 sm:gap-8 mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300">
+                <div>
+                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Chief Surgeon</span>
+                    <strong class="text-slate-900 dark:text-white">{{ case.chief_surgeon }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Patient Pet</span>
+                    <strong class="text-slate-900 dark:text-white">{{ case.pet_species }} ({{ case.pet_name }})</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 font-bold uppercase text-[10px] block">Procedure Date</span>
+                    <strong class="text-slate-900 dark:text-white">{{ case.treatment_date|date:"F d, Y" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before & After Comparison or Media Showcase -->
+        {% if case.before_image and case.after_image %}
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg mb-8">
+            <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-code-compare text-rose-500"></i> Pre-Op vs Post-Op Healing
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <div class="relative rounded-2xl overflow-hidden h-72 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <img src="{{ case.before_image.url }}" alt="Before Treatment" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-xl shadow">
+                            Pre-Operative / Injury Condition
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <div class="relative rounded-2xl overflow-hidden h-72 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <img src="{{ case.after_image.url }}" alt="After Treatment" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-xl shadow">
+                            Post-Operative Healed Recovery
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif case.primary_image %}
+        <div class="rounded-3xl overflow-hidden h-96 bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl mb-8">
+            <img src="{{ case.primary_image.url }}" alt="{{ case.title }}" class="w-full h-full object-contain">
+        </div>
+        {% endif %}
+
+        <!-- Video Walkthrough if present -->
+        {% if case.video_url %}
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-lg mb-8">
+            <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-circle-play text-rose-500"></i> Procedure Video Documentation
+            </h2>
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black">
+                <iframe src="{{ case.video_url }}" title="{{ case.title }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Clinical Documentation Breakdown -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Left 2 cols: Medical History & Surgical Details -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 1. Diagnosis -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-extrabold text-base text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-notes-medical text-brand-500"></i> Clinical Diagnosis & Presentation
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                        {{ case.case_summary }}
+                    </p>
+                </div>
+
+                <!-- 2. Procedure Details -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-extrabold text-base text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-scalpel-path text-rose-500"></i> Surgical Intervention & Technique
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                        {{ case.procedure_details }}
+                    </p>
+                </div>
+
+                <!-- 3. Recovery Outcome -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-extrabold text-base text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-heart text-emerald-500"></i> Post-Op Care & Outcome
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                        {{ case.recovery_outcome }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right 1 col: Doctor Consultation Callout -->
+            <div class="space-y-6">
+                <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-3xl p-6 shadow-xl space-y-4">
+                    <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <h4 class="font-extrabold text-lg text-white">Does Your Pet Need Surgical Care?</h4>
+                    <p class="text-xs text-emerald-100 leading-relaxed">
+                        Book a thorough clinical examination with Dr. Abdulla Al Mamun Bhuyan for fracture repairs, tumor removal, or preventative care.
+                    </p>
+                    <a href="{% url 'book_appointment' %}?service=Surgery" class="inline-flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white text-emerald-800 font-bold text-xs shadow hover:bg-emerald-50 transition">
+                        <i class="fa-regular fa-calendar-check"></i> Book Doctor Consultation
+                    </a>
+                </div>
+
+                <!-- Clinic Helpline -->
+                <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm text-center">
+                    <p class="text-xs text-slate-400 font-bold uppercase mb-1">Clinic Hotline (Rajshahi)</p>
+                    <a href="tel:+8801316254500" class="text-base font-extrabold text-slate-900 dark:text-white hover:text-brand-600 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-phone-volume text-brand-500"></i> +8801316254500
+                    </a>
+                    <p class="text-[11px] text-slate-400 mt-2">138 Debishing Para, Madrashar More</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

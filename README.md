@@ -77,14 +77,40 @@ This project is completely configured for seamless production deployment on plat
 
 ## 🛠️ Local Development
 
+### The short command (Windows)
+
+```
+python run_server.py
+```
+
+That is all. It automatically:
+
+1. installs any missing dependencies from `requirements.txt`,
+2. **picks a free port** — if `8000` is already used by another app it moves to `8001`, `8002`, … (so the server can never crash with *"That port is already in use"*),
+3. creates the `static/` and `media/` folders if they were deleted,
+4. runs `manage.py check` and stops with a clear message if something is misconfigured,
+5. applies pending migrations, then starts the server.
+
+The terminal prints the exact URL to open, e.g. `http://127.0.0.1:8001/`.
+
+Useful variants:
+
+```
+python run_server.py 8010        # force a specific port
+python run_server.py --noreload  # disable auto-reload
+start.bat                        # double-click launcher (same thing)
+.\start.ps1                      # PowerShell version
+```
+
+> After adding new features (new app → `python manage.py makemigrations` +
+> `python run_server.py`), the launcher keeps working: it re-runs the Django
+> system check and applies any new migrations automatically.
+
+### Manual steps (optional)
+
 ```bash
-# 1. Apply database migrations
-python manage.py migrate
-
-# 2. Seed initial sample products, schedules, and clinic info
-python manage.py seed_data
-
-# 3. Start local development server
-python manage.py runserver
+python manage.py migrate        # apply migrations
+python manage.py seed_data      # seed demo products / schedules / clinic info
+python manage.py runserver 8000 # plain Django server
 ```
 Visit `http://127.0.0.1:8000/` in your browser.

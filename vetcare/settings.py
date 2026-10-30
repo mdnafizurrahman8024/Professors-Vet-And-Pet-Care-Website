@@ -20,6 +20,10 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes', 't')
 
+# Local dev helpers: the launcher scripts set DJANGO_PORT so whatever port we
+# end up on is always trusted (no "Bad Request (400)" / CSRF 403 surprises).
+LOCAL_PORT = os.environ.get('DJANGO_PORT', '8000').strip() or '8000'
+
 # Dynamic Allowed Hosts
 allowed_hosts_str = os.environ.get('ALLOWED_HOSTS', '*')
 if allowed_hosts_str.strip() == '*':
@@ -38,6 +42,10 @@ else:
         'https://*.pythonanywhere.com',
         'http://localhost:8000',
         'http://127.0.0.1:8000',
+        'http://localhost:8001',
+        'http://127.0.0.1:8001',
+        'http://localhost:{}'.format(LOCAL_PORT),
+        'http://127.0.0.1:{}'.format(LOCAL_PORT),
     ]
 
 # Application definition
@@ -141,10 +149,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Only include the project static dir if it exists, so `manage.py runserver`
+# never dies with "Directory ... does not exist" after a fresh clone/reset.
+STATICFILES_DIRS = []
+if (BASE_DIR / 'static').is_dir():
+    STATICFILES_DIRS.append(BASE_DIR / 'static')
 
 # WhiteNoise Storage for Fast, Cached, Compressed Static Files in Production
 STORAGES = {
@@ -159,6 +170,7 @@ STORAGES = {
 # Media files (User avatars, surgery pictures, prescription uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 # Production Security Enhancements (Engaged automatically when DEBUG=False)
 if not DEBUG:
@@ -176,3 +188,9 @@ LOGOUT_REDIRECT_URL = 'home'
 
 # Console email backend for testing password recovery
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Local development: plain HTTP, so secure cookies must stay OFF for
+# http://127.0.0.1:<port> to log in and submit forms correctly.
+if DEBUG:
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False

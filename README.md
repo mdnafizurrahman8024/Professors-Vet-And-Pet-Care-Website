@@ -93,6 +93,23 @@ That is all. It automatically:
 
 The terminal prints the exact URL to open, e.g. `http://127.0.0.1:8001/`.
 
+The same launcher is available through npm:
+
+```
+npm start
+npm run dev
+```
+
+Both commands automatically select the first free port from `8000` through
+`8010`, so an existing server does not prevent the app from starting. The
+selected URL is printed in the terminal. You can pass the launcher's options
+through npm when needed:
+
+```
+npm run dev -- --noreload
+npm start -- 8010
+```
+
 Useful variants:
 
 ```

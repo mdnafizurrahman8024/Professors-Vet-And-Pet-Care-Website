@@ -1,0 +1,8 @@
+{
+  "name": "professors-vet-pet-care",
+  "private": true,
+  "scripts": {
+    "start": "python run_server.py",
+    "dev": "python run_server.py"
+  }
+}

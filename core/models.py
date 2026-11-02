@@ -51,8 +51,10 @@ class ClinicInfo(models.Model):
     clinic_physical_address = models.TextField(
         default="138 Debishing Para, Madrashar More, Rajshahi"
     )
+    map_latitude = models.DecimalField(max_digits=18, decimal_places=15, default=24.367926395092578)
+    map_longitude = models.DecimalField(max_digits=18, decimal_places=15, default=88.62464757770542)
     map_satellite_embed_url = models.TextField(
-        default="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3634.3904576352934!2d88.6366!3d24.3636!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fbefb8d601a9a7%3A0x6b87635b7190f845!2sDepartment%20of%20Veterinary%20and%20Animal%20Sciences!5e1!3m2!1sen!2sbd!4v1710000000000!5m2!1sen!2sbd"
+        default="https://maps.google.com/maps?q=Professor%27s%20Vet%20%26%20Pet%20Care%4024.367926395092578,88.62464757770542&t=k&z=18&ie=UTF8&iwloc=&output=embed"
     )
     operating_hours = models.CharField(max_length=255, default="Sat - Thu: 04:00 PM - 09:30 PM | Friday: 10:00 AM - 08:00 PM")
     emergency_contact = models.CharField(max_length=50, default="+8801316254500")

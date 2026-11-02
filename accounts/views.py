@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.crypto import get_random_string
 from django.db.models import Q
+from django.urls import reverse
 from .models import CustomUser, Pet
 from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, PetForm
 from .backends import EmailOrPhoneBackend
@@ -102,6 +103,41 @@ def dashboard_view(request):
     pets = Pet.objects.filter(owner=user).order_by('-created_at')
     appointments = Appointment.objects.filter(Q(user=user) | Q(owner_email=user.email) | Q(owner_phone=user.phone)).distinct().order_by('-appointment_date', '-appointment_time')
     orders = Order.objects.filter(Q(user=user) | Q(email=user.email)).distinct().order_by('-created_at')
+    history = []
+    for appointment in appointments:
+        history.append({
+            'timestamp': appointment.created_at,
+            'icon': 'fa-calendar-check',
+            'color': 'blue',
+            'title': 'Doctor appointment booked',
+            'description': f'{appointment.service_type} for {appointment.pet_name}',
+            'status': appointment.get_status_display(),
+            'reference': appointment.booking_id,
+            'url': reverse('user_dashboard') + '?tab=appointments',
+        })
+    for order in orders:
+        history.append({
+            'timestamp': order.created_at,
+            'icon': 'fa-bag-shopping',
+            'color': 'amber',
+            'title': 'Pet store order placed',
+            'description': f'{order.order_number} · {order.get_status_display()}',
+            'status': f'{order.payment_status} · ৳{order.total_amount:.0f}',
+            'reference': order.order_number,
+            'url': reverse('user_dashboard') + '?tab=orders',
+        })
+        if order.payment_status == 'PAID':
+            history.append({
+                'timestamp': order.updated_at,
+                'icon': 'fa-credit-card',
+                'color': 'emerald',
+                'title': 'Payment recorded',
+                'description': f'{order.get_payment_method_display()} for {order.order_number}',
+                'status': f'Paid · ৳{order.total_amount:.0f}',
+                'reference': order.transaction_id or order.order_number,
+                'url': reverse('order_confirmation', kwargs={'order_number': order.order_number}),
+            })
+    history.sort(key=lambda item: item['timestamp'], reverse=True)
 
     # Profile Update handling
     if request.method == 'POST' and 'update_profile' in request.POST:
@@ -140,6 +176,7 @@ def dashboard_view(request):
         'pets': pets,
         'appointments': appointments,
         'orders': orders,
+        'history': history,
         'active_tab': active_tab,
     })
 

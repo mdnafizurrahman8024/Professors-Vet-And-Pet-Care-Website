@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -209,18 +209,15 @@
     <!-- 2. MAIN NAVIGATION HEADER -->
     <header class="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+            <div class="flex items-center justify-between h-20 gap-3">
                 <!-- Brand Logo & Identity -->
-                <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+                <a href="{% url 'home' %}" class="flex items-center gap-3 group flex-shrink-0">
                     <div class="relative w-12 h-12 rounded-xl overflow-hidden bg-brand-500/10 dark:bg-brand-400/10 p-1 flex items-center justify-center border border-brand-500/20 shadow-sm group-hover:scale-105 transition-transform duration-300">
                         <img src="{% static 'images/logo.png' %}" alt="Professor's Vet & Pet Care Logo" class="w-full h-full object-contain">
                     </div>
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 bg-clip-text text-transparent">
-                                Professor's Vet
-                            </span>
-                            <span class="text-xs bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 px-1.5 py-0.5 rounded font-semibold">& Pet Care</span>
+                    <div class="min-w-max">
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 bg-clip-text text-transparent whitespace-nowrap">Professor's Vet & Pet Care</span>
                         </div>
                         <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Prof. Dr. Abdulla Al Mamun Bhuyan • Rajshahi</p>
                     </div>
@@ -232,7 +229,7 @@
                         <i class="fa-solid fa-house mr-1 text-slate-400"></i> Home
                     </a>
                     <a href="{% url 'home' %}#doctor-profile" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-user-doctor mr-1 text-brand-500"></i> Dr. Porichiti
+                        <i class="fa-solid fa-user-doctor mr-1 text-brand-500"></i> {% trans "Dr. Information" %}
                     </a>
                     <a href="{% url 'book_appointment' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
                         <i class="fa-regular fa-calendar-check mr-1 text-blue-500"></i> Appointments
@@ -243,13 +240,21 @@
                     <a href="{% url 'shop_home' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
                         <i class="fa-solid fa-bag-shopping mr-1 text-amber-500"></i> Pet Store
                     </a>
-                    <a href="{% url 'home' %}#clinic-map" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+                    <a href="{% url 'location' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
                         <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> Location Map
                     </a>
                 </nav>
 
                 <!-- Actions: Theme Toggle, Cart, User Profile & Mobile Toggle -->
                 <div class="flex items-center gap-2 sm:gap-3">
+                    <form action="{% url 'set_language' %}" method="post" class="hidden sm:block">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <select name="language" onchange="this.form.submit()" aria-label="{% trans 'Select language' %}" class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2">
+                            <option value="en" {% if request.LANGUAGE_CODE == 'en' or request.LANGUAGE_CODE == 'en-us' %}selected{% endif %}>English</option>
+                            <option value="bn" {% if request.LANGUAGE_CODE == 'bn' %}selected{% endif %}>বাংলা</option>
+                        </select>
+                    </form>
                     
                     <!-- Theme Toggle (Day / Dark / System) -->
                     <div class="relative" id="theme-toggle-container">
@@ -306,6 +311,9 @@
                                 <a href="{% url 'user_dashboard' %}?tab=orders" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
                                     <i class="fa-solid fa-box text-amber-500 w-4"></i> My Orders
                                 </a>
+                                <a href="{% url 'user_dashboard' %}?tab=history" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                                    <i class="fa-solid fa-clock-rotate-left text-emerald-500 w-4"></i> History Log
+                                </a>
                                 <a href="{% url 'user_dashboard' %}?tab=pets" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
                                     <i class="fa-solid fa-paw text-rose-500 w-4"></i> My Pets
                                 </a>
@@ -341,11 +349,14 @@
         <!-- Mobile Drawer Menu -->
         <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-2">
             <a href="{% url 'home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Home</a>
-            <a href="{% url 'home' %}#doctor-profile" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Dr. Porichiti (Profile)</a>
+            <a href="{% url 'home' %}#doctor-profile" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Dr. Information (Profile)</a>
             <a href="{% url 'book_appointment' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Book Appointment</a>
             <a href="{% url 'gallery_list' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Surgery & Case Gallery</a>
             <a href="{% url 'shop_home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Pet Food & Medicine Store</a>
-            <a href="{% url 'home' %}#clinic-map" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Google Satellite Map</a>
+            <a href="{% url 'location' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Google Satellite Map</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'user_dashboard' %}?tab=history" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">History Log</a>
+            {% endif %}
             {% if not user.is_authenticated %}
                 <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex gap-2">
                     <a href="{% url 'login' %}" class="flex-1 text-center py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 font-semibold text-sm">Log In</a>
@@ -407,7 +418,7 @@
                         <li><a href="{% url 'gallery_list' %}" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Surgery & Treatment Gallery</a></li>
                         <li><a href="{% url 'shop_home' %}" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Pet Food & Accessories Store</a></li>
                         <li><a href="{% url 'shop_home' %}?category=veterinary-medicine" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Prescription Vet Pharmacy</a></li>
-                        <li><a href="{% url 'home' %}#doctor-profile" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Dr. Porichiti (Doctor Profile)</a></li>
+                        <li><a href="{% url 'home' %}#doctor-profile" class="hover:text-brand-400 transition flex items-center gap-1.5"><i class="fa-solid fa-angle-right text-[10px] text-brand-500"></i> Dr. Information (Doctor Profile)</a></li>
                     </ul>
                 </div>
 
@@ -463,7 +474,7 @@
             <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                 <p>© 2026 Professor's Vet & Pet Care. All Rights Reserved. Clinical Supervision by Prof. Dr. Abdulla Al Mamun Bhuyan.</p>
                 <div class="flex items-center gap-4">
-                    <a href="{% url 'home' %}#clinic-map" class="hover:text-brand-400 transition">Google Satellite Map</a>
+                    <a href="{% url 'location' %}" class="hover:text-brand-400 transition">Google Satellite Map</a>
                     <span>•</span>
                     <a href="{% url 'book_appointment' %}" class="hover:text-brand-400 transition">Book Slot</a>
                     <span>•</span>

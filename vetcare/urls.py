@@ -10,6 +10,7 @@ admin.site.index_title = "Clinic & E-Commerce Management"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('', include('core.urls')),
     path('accounts/', include('accounts.urls')),
     path('appointments/', include('appointments.urls')),

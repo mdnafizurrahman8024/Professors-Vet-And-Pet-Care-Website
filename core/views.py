@@ -17,3 +17,7 @@ def home(request):
         'featured_products': featured_products,
         'featured_cases': featured_cases,
     })
+
+
+def location(request):
+    return render(request, 'core/location.html')

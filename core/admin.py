@@ -11,4 +11,4 @@ class NoticeOfferAdmin(admin.ModelAdmin):
 
 @admin.register(ClinicInfo)
 class ClinicInfoAdmin(admin.ModelAdmin):
-    list_display = ('clinic_name', 'doctor_name', 'cell_number', 'email', 'clinic_physical_address')
+    list_display = ('clinic_name', 'doctor_name', 'map_latitude', 'map_longitude', 'cell_number', 'email', 'clinic_physical_address')

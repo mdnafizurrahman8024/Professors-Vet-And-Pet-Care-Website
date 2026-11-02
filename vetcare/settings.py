@@ -145,6 +145,9 @@ LANGUAGES = [
     ('en', 'English'),
     ('bn', 'বাংলা'),
 ]
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 TIME_ZONE = 'Asia/Dhaka'
 

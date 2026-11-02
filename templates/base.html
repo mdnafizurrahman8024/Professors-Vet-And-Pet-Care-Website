@@ -1,10 +1,10 @@
 {% load static i18n %}
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Professor's Vet & Pet Care | Rajshahi{% endblock %}</title>
+    <title>{% block title %}{% trans "Professor's Vet & Pet Care | Rajshahi" %}{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
 
     <!-- Tailwind CSS (Tailwind CDN with arbitrary values & modern plugins) -->
@@ -226,22 +226,22 @@
                 <!-- Desktop Navigation Links -->
                 <nav class="hidden lg:flex items-center space-x-1 xl:space-x-2 text-sm font-semibold">
                     <a href="{% url 'home' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-house mr-1 text-slate-400"></i> Home
+                        <i class="fa-solid fa-house mr-1 text-slate-400"></i> <span data-i18n="home">{% trans "Home" %}</span>
                     </a>
                     <a href="{% url 'home' %}#doctor-profile" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-user-doctor mr-1 text-brand-500"></i> {% trans "Dr. Information" %}
+                        <i class="fa-solid fa-user-doctor mr-1 text-brand-500"></i> <span data-i18n="doctor_information">{% trans "Dr. Information" %}</span>
                     </a>
                     <a href="{% url 'book_appointment' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
-                        <i class="fa-regular fa-calendar-check mr-1 text-blue-500"></i> Appointments
+                        <i class="fa-regular fa-calendar-check mr-1 text-blue-500"></i> <span data-i18n="appointments">{% trans "Appointments" %}</span>
                     </a>
                     <a href="{% url 'gallery_list' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
                         <i class="fa-solid fa-heart-pulse mr-1 text-rose-500"></i> Surgery Gallery
                     </a>
                     <a href="{% url 'shop_home' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-bag-shopping mr-1 text-amber-500"></i> Pet Store
+                        <i class="fa-solid fa-bag-shopping mr-1 text-amber-500"></i> <span data-i18n="pet_store">{% trans "Pet Store" %}</span>
                     </a>
                     <a href="{% url 'location' %}" class="px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
-                        <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> Location Map
+                        <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> <span data-i18n="location_map">{% trans "Location Map" %}</span>
                     </a>
                 </nav>
 
@@ -250,9 +250,9 @@
                     <form action="{% url 'set_language' %}" method="post" class="hidden sm:block">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                        <select name="language" onchange="this.form.submit()" aria-label="{% trans 'Select language' %}" class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2">
-                            <option value="en" {% if request.LANGUAGE_CODE == 'en' or request.LANGUAGE_CODE == 'en-us' %}selected{% endif %}>English</option>
-                            <option value="bn" {% if request.LANGUAGE_CODE == 'bn' %}selected{% endif %}>বাংলা</option>
+                        <select id="language-selector" name="language" aria-label="{% trans 'Select language' %}" class="h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-2">
+                            <option value="en" {% if request.LANGUAGE_CODE == 'en' or request.LANGUAGE_CODE == 'en-us' %}selected{% endif %}>{% trans "English" %}</option>
+                            <option value="bn" {% if request.LANGUAGE_CODE == 'bn' %}selected{% endif %}>{% trans "Bengali" %}</option>
                         </select>
                     </form>
                     
@@ -312,7 +312,7 @@
                                     <i class="fa-solid fa-box text-amber-500 w-4"></i> My Orders
                                 </a>
                                 <a href="{% url 'user_dashboard' %}?tab=history" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
-                                    <i class="fa-solid fa-clock-rotate-left text-emerald-500 w-4"></i> History Log
+                                    <i class="fa-solid fa-clock-rotate-left text-emerald-500 w-4"></i> <span data-i18n="history_log">{% trans "History Log" %}</span>
                                 </a>
                                 <a href="{% url 'user_dashboard' %}?tab=pets" class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
                                     <i class="fa-solid fa-paw text-rose-500 w-4"></i> My Pets
@@ -348,14 +348,14 @@
 
         <!-- Mobile Drawer Menu -->
         <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-3 pb-6 space-y-2">
-            <a href="{% url 'home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Home</a>
+            <a href="{% url 'home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"><span data-i18n="home">{% trans "Home" %}</span></a>
             <a href="{% url 'home' %}#doctor-profile" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Dr. Information (Profile)</a>
             <a href="{% url 'book_appointment' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Book Appointment</a>
             <a href="{% url 'gallery_list' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Surgery & Case Gallery</a>
             <a href="{% url 'shop_home' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Pet Food & Medicine Store</a>
-            <a href="{% url 'location' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Google Satellite Map</a>
+            <a href="{% url 'location' %}" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"><span data-i18n="satellite_map">{% trans "Google Satellite Map" %}</span></a>
             {% if user.is_authenticated %}
-                <a href="{% url 'user_dashboard' %}?tab=history" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">History Log</a>
+                <a href="{% url 'user_dashboard' %}?tab=history" class="block px-3 py-2 rounded-lg font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"><span data-i18n="history_log">{% trans "History Log" %}</span></a>
             {% endif %}
             {% if not user.is_authenticated %}
                 <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex gap-2">
@@ -545,6 +545,48 @@
         if (mobileBtn && mobileMenu) {
             mobileBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        const languageSelector = document.getElementById('language-selector');
+        const translations = {
+            bn: {
+                home: 'হোম',
+                doctor_information: 'ডাক্তারের তথ্য',
+                appointments: 'অ্যাপয়েন্টমেন্ট',
+                pet_store: 'পোষা প্রাণীর দোকান',
+                location_map: 'লোকেশন ম্যাপ',
+                satellite_map: 'গুগল স্যাটেলাইট ম্যাপ',
+                history_log: 'ইতিহাস লগ',
+                satellite_heading: 'স্যাটেলাইট নেভিগেশন ও লোকেশন',
+                visit_clinic: 'প্রফেসরের ভেট অ্যান্ড পেট কেয়ার ক্লিনিকে আসুন',
+                chamber_location: 'চেম্বারের অবস্থান',
+                physical_address: 'শারীরিক ঠিকানা'
+            }
+        };
+        function applyLanguage(language) {
+            const dictionary = translations[language] || {};
+            document.documentElement.lang = language;
+            document.querySelectorAll('[data-i18n]').forEach((element) => {
+                const key = element.dataset.i18n;
+                if (language === 'bn' && dictionary[key]) {
+                    element.textContent = dictionary[key];
+                } else if (language === 'en') {
+                    element.textContent = element.dataset.i18nEnglish || element.textContent;
+                }
+            });
+        }
+        const savedLanguage = localStorage.getItem('siteLanguage') || '{{ request.LANGUAGE_CODE|default:"en"|slice:":2" }}';
+        if (languageSelector) languageSelector.value = savedLanguage;
+        document.querySelectorAll('[data-i18n]').forEach((element) => {
+            element.dataset.i18nEnglish = element.textContent.trim();
+        });
+        applyLanguage(savedLanguage);
+        if (languageSelector) {
+            languageSelector.addEventListener('change', () => {
+                localStorage.setItem('siteLanguage', languageSelector.value);
+                applyLanguage(languageSelector.value);
+                languageSelector.form.submit();
             });
         }
     </script>

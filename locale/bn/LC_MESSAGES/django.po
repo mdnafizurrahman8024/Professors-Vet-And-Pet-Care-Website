@@ -1,0 +1,74 @@
+msgid ""
+msgstr ""
+"Language: bn\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Professor's Vet & Pet Care | Rajshahi"
+msgstr "প্রফেসরের ভেট অ্যান্ড পেট কেয়ার | রাজশাহী"
+
+msgid "Home"
+msgstr "হোম"
+
+msgid "Dr. Information"
+msgstr "ডাক্তারের তথ্য"
+
+msgid "Appointments"
+msgstr "অ্যাপয়েন্টমেন্ট"
+
+msgid "Pet Store"
+msgstr "পোষা প্রাণীর দোকান"
+
+msgid "Location Map"
+msgstr "লোকেশন ম্যাপ"
+
+msgid "English"
+msgstr "ইংরেজি"
+
+msgid "Bengali"
+msgstr "বাংলা"
+
+msgid "History Log"
+msgstr "ইতিহাস লগ"
+
+msgid "Google Satellite Map"
+msgstr "গুগল স্যাটেলাইট ম্যাপ"
+
+msgid "Satellite Navigation & Location"
+msgstr "স্যাটেলাইট নেভিগেশন ও লোকেশন"
+
+msgid "Visit Professor's Vet & Pet Care Clinic"
+msgstr "প্রফেসরের ভেট অ্যান্ড পেট কেয়ার ক্লিনিকে আসুন"
+
+msgid "Chamber Location"
+msgstr "চেম্বারের অবস্থান"
+
+msgid "Physical Address"
+msgstr "শারীরিক ঠিকানা"
+
+msgid "Coordinates"
+msgstr "স্থানাঙ্ক"
+
+msgid "Get Live Directions"
+msgstr "সরাসরি নির্দেশনা নিন"
+
+msgid "Google Satellite View"
+msgstr "গুগল স্যাটেলাইট ভিউ"
+
+msgid "Profile & Address"
+msgstr "প্রোফাইল ও ঠিকানা"
+
+msgid "My Pets"
+msgstr "আমার পোষা প্রাণী"
+
+msgid "Clinic Appointments"
+msgstr "ক্লিনিক অ্যাপয়েন্টমেন্ট"
+
+msgid "Orders & Invoices"
+msgstr "অর্ডার ও ইনভয়েস"
+
+msgid "Privacy & Security"
+msgstr "গোপনীয়তা ও নিরাপত্তা"
+
+msgid "Your Activity History"
+msgstr "আপনার কার্যক্রমের ইতিহাস"

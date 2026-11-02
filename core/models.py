@@ -54,7 +54,7 @@ class ClinicInfo(models.Model):
     map_latitude = models.DecimalField(max_digits=18, decimal_places=15, default=24.367926395092578)
     map_longitude = models.DecimalField(max_digits=18, decimal_places=15, default=88.62464757770542)
     map_satellite_embed_url = models.TextField(
-        default="https://maps.google.com/maps?q=Professor%27s%20Vet%20%26%20Pet%20Care%4024.367926395092578,88.62464757770542&t=k&z=18&ie=UTF8&iwloc=&output=embed"
+        default="https://maps.google.com/maps?q=24.367926395092578,88.62464757770542+(Professor's+Vet+%26+Pet+Care)&t=k&z=18&ie=UTF8&iwloc=&output=embed"
     )
     operating_hours = models.CharField(max_length=255, default="Sat - Thu: 04:00 PM - 09:30 PM | Friday: 10:00 AM - 08:00 PM")
     emergency_contact = models.CharField(max_length=50, default="+8801316254500")

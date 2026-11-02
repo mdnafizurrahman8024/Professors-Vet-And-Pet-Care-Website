@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}Clinic Location | Professor's Vet & Pet Care{% endblock %}
 
@@ -6,8 +7,8 @@
 <main class="py-12 sm:py-16 bg-slate-900 text-white min-h-[70vh]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mb-8">
-            <p class="text-emerald-400 font-bold text-xs uppercase tracking-wider">Satellite Navigation & Location</p>
-            <h1 class="text-3xl sm:text-4xl font-extrabold mt-2">Visit Professor's Vet & Pet Care Clinic</h1>
+            <p class="text-emerald-400 font-bold text-xs uppercase tracking-wider" data-i18n="satellite_heading">{% trans "Satellite Navigation & Location" %}</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold mt-2" data-i18n="visit_clinic">{% trans "Visit Professor's Vet & Pet Care Clinic" %}</h1>
             <p class="text-sm text-slate-400 mt-3">{{ clinic.clinic_physical_address }}, Rajshahi, Bangladesh</p>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -15,28 +16,28 @@
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl"><i class="fa-solid fa-location-dot"></i></div>
                     <div>
-                        <h2 class="font-extrabold text-lg">Chamber Location</h2>
+                        <h2 class="font-extrabold text-lg" data-i18n="chamber_location">{% trans "Chamber Location" %}</h2>
                         <p class="text-xs text-emerald-400 font-semibold">Exact clinic coordinates</p>
                     </div>
                 </div>
                 <div class="space-y-3 text-xs text-slate-300">
                     <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/80">
-                        <p class="text-slate-400 font-bold uppercase text-[10px] mb-1">Physical Address</p>
+                        <p class="text-slate-400 font-bold uppercase text-[10px] mb-1" data-i18n="physical_address">{% trans "Physical Address" %}</p>
                         <p class="font-semibold text-white">{{ clinic.clinic_physical_address }}, Rajshahi, Bangladesh</p>
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-700/80">
-                        <p class="text-slate-400 font-bold uppercase text-[10px] mb-1">Coordinates</p>
+                        <p class="text-slate-400 font-bold uppercase text-[10px] mb-1">{% trans "Coordinates" %}</p>
                         <p class="font-mono font-semibold text-white">{{ clinic.map_latitude }}, {{ clinic.map_longitude }}</p>
                     </div>
                 </div>
                 <a href="https://www.google.com/maps/dir/?api=1&destination={{ clinic.map_latitude }},{{ clinic.map_longitude }}" target="_blank" rel="noopener noreferrer" class="mt-6 block py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold text-center transition">
-                    <i class="fa-solid fa-diamond-turn-right mr-2"></i>Get Live Directions
+                    <i class="fa-solid fa-diamond-turn-right mr-2"></i>{% trans "Get Live Directions" %}
                 </a>
             </section>
             <section class="lg:col-span-7 rounded-3xl overflow-hidden border border-slate-700 shadow-2xl h-[460px] relative bg-slate-950">
                 <iframe title="Google Satellite Map - Professor's Vet & Pet Care" src="{{ clinic.map_satellite_embed_url }}" width="100%" height="100%" style="border:0; min-height:460px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 <div class="absolute top-4 left-4 bg-slate-900/90 border border-slate-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl shadow flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span><span>Google Satellite View</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span><span>{% trans "Google Satellite View" %}</span>
                 </div>
             </section>
         </div>
